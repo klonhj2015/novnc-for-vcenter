@@ -6,10 +6,12 @@ class testBase(unittest.TestCase):
     def test_base64_encode(self):
         param_dict = {
             "host": "172.16.165.131",
-            "port": "5901"
+            "port": "5903"
         }
 
         json_str = json.dumps(param_dict)
+
+        print json_str
 
         print base64.encodestring(json_str)
 

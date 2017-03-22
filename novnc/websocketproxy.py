@@ -33,35 +33,12 @@ from json import loads
 LOG = logging.getLogger(__name__)
 
 
-
-class NovaProxyRequestHandlerBase(object):
-    def address_string(self):
-        # NOTE(rpodolyaka): override the superclass implementation here and
-        # explicitly disable the reverse DNS lookup, which might fail on some
-        # deployments due to DNS configuration and break VNC access completely
-        return str(self.client_address[0])
-
-    def verify_origin_proto(self, connection_info, origin_proto):
-        access_url = connection_info.get('access_url')
-        if not access_url:
-            detail = _("No access_url in connection_info. "
-                        "Cannot validate protocol")
-            raise exceptions(detail=detail)
-        expected_protos = [urlparse.urlparse(access_url).scheme]
-        # NOTE: For serial consoles the expected protocol could be ws or
-        # wss which correspond to http and https respectively in terms of
-        # security.
-        if 'ws' in expected_protos:
-            expected_protos.append('http')
-        if 'wss' in expected_protos:
-            expected_protos.append('https')
-
-        return origin_proto in expected_protos
-
+class ProxyRequestHandlerBase(object):
     def new_websocket_client(self):
         """Called after a new WebSocket connection has been established."""
         # Reopen the eventlet hub to make sure we don't share an epoll
         # fd with parent and/or siblings, which would be bad
+
         from eventlet import hubs
         hubs.use_hub()
 
@@ -127,7 +104,7 @@ class NovaProxyRequestHandlerBase(object):
             raise
 
 
-class NovaProxyRequestHandler(NovaProxyRequestHandlerBase,
+class ProxyRequestHandler(ProxyRequestHandlerBase,
                               websockify.ProxyRequestHandler):
     def __init__(self, *args, **kwargs):
         websockify.ProxyRequestHandler.__init__(self, *args, **kwargs)
@@ -136,7 +113,7 @@ class NovaProxyRequestHandler(NovaProxyRequestHandlerBase,
         return websockify.WebSocketServer.socket(*args, **kwargs)
 
 
-class NovaWebSocketProxy(websockify.WebSocketProxy):
+class WebSocketProxy(websockify.WebSocketProxy):
     @staticmethod
     def get_logger():
         return LOG

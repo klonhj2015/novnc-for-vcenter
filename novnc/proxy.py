@@ -13,9 +13,7 @@ def exit_with_error(msg, errno=-1):
 
 def proxy(host, port):
 
-
-
-    websocketproxy.NovaWebSocketProxy(
+    websocketproxy.WebSocketProxy(
         listen_port=port,
         listen_host=host,
         source_is_ipv6=False,
@@ -28,5 +26,5 @@ def proxy(host, port):
         traffic=True,
         web=CONF.web,
         file_only=True,
-        RequestHandlerClass=websocketproxy.NovaProxyRequestHandler
+        RequestHandlerClass=websocketproxy.ProxyRequestHandler
     ).start_server()
