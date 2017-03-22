@@ -1,0 +1,11 @@
+[Unit]
+Description=Vnc Console for Vcenter
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/novnc-bin
+
+[Install]
+WantedBy=multi-user.target
