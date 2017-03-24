@@ -1,2 +1,3 @@
 recursive-include etc *
 recursive-include usr *
+recursive-include var *
