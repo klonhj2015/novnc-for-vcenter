@@ -29,7 +29,7 @@ python setup.py build
 %install
 cp -r etc $RPM_BUILD_ROOT
 cp -r usr $RPM_BUILD_ROOT
-cp -r var $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/var/log/novnc
 chmod 0755 $RPM_BUILD_ROOT/usr/bin/novnc-bin
 
 %clean
