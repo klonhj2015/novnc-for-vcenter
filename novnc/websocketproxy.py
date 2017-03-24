@@ -49,6 +49,8 @@ class ProxyRequestHandlerBase(object):
             # From a bug in urlparse in Python < 2.7.4 we cannot support
             # special schemes (cf: http://bugs.python.org/issue9374)
             if sys.version_info < (2, 7, 4):
+                LOG.error(("We do not support scheme '%s' under Python < 2.7.4, "
+                      "please use http or https") % parse.scheme)
                 raise exceptions(
                     ("We do not support scheme '%s' under Python < 2.7.4, "
                       "please use http or https") % parse.scheme)
@@ -85,22 +87,27 @@ class ProxyRequestHandlerBase(object):
             origin_scheme = origin.scheme
             if origin_hostname == '' or origin_scheme == '':
                 detail = _("Origin header not valid.")
+                LOG.error(detail)
                 raise exceptions(detail=detail)
 
         param_dict = loads(decodestring(token))
 
         host = param_dict["host"]
         port = int(param_dict["port"])
+        LOG.info("Accsss the host %s port %d..", host, port)
         tsock = self.socket(host, port, connect=True)
 
         try:
             self.do_proxy(tsock)
-        except Exception:
+        except Exception as e:
+
             if tsock:
                 tsock.shutdown(socket.SHUT_RDWR)
                 tsock.close()
                 self.vmsg(_("%(host)s:%(port)s: Target closed") %
                           {'host': host, 'port': port})
+
+            LOG.error(_("Socket exception:" + e.message))
             raise
 
 
