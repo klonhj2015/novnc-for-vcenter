@@ -6,6 +6,8 @@ CONF = config.CONF
 
 
 def main():
+    logging.register_options(CONF)
+
     CONF(default_config_files=['/etc/contrail/novnc.conf'])
     CONF.set_default('web', '/usr/share/novnc')
 
