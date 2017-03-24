@@ -3,6 +3,10 @@ import sys
 import websocketproxy
 from novnc.config import config
 
+from oslo_log import log as logging
+
+LOG = logging.getLogger(__name__)
+
 CONF = config.CONF
 
 
@@ -12,6 +16,8 @@ def exit_with_error(msg, errno=-1):
 
 
 def proxy(host, port):
+
+    LOG.info("Start no vnc proxy...")
 
     websocketproxy.WebSocketProxy(
         listen_port=port,
